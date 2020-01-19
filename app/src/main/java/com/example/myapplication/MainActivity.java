@@ -6,7 +6,9 @@ import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -38,12 +40,18 @@ public class MainActivity extends AppCompatActivity {
     ImageView thirdLeftIce;
     ImageView thirdRightIce;
 
-    ImageView immortality;
     TextView scoreTextView;
     ConstraintLayout constraintLayout;
 
     static float leftOrRight = 0;
     static boolean lost = false;
+
+
+    static boolean immortalityBool = false;
+    ImageView immortalityBubble;
+    ImageView immortalityImageView;
+
+    ImageView teleportImageView;
 
     static float change = 0;
     static long startClid;
@@ -52,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     static ViewGroup.MarginLayoutParams mlp;
     int activeObstacle = 0;
     int score;
+    static int currentScore=100;
 
 
     @Override
@@ -77,9 +86,12 @@ public class MainActivity extends AppCompatActivity {
         rightIce = findViewById(R.id.right_ice_view);
         leftIce.setVisibility(View.INVISIBLE);
         rightIce.setVisibility(View.INVISIBLE);
-        immortality = findViewById(R.id.immortality_circle);
+        immortalityBubble = findViewById(R.id.immortality_circle);
         constraintLayout = findViewById(R.id.constraint);
         scoreTextView = findViewById(R.id.score_text);
+        immortalityImageView = findViewById(R.id.immortality_image_view);
+        immortalityBubble.setVisibility(View.INVISIBLE);
+        teleportImageView = findViewById(R.id.teleport_image_view);
         secondLeftIce = new ImageView(this);
         thirdLeftIce = new ImageView(this);
         secondRightIce = new ImageView(this);
@@ -136,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
             change = -20f;
             leftOrRight = 0;
             leftOrRight += -6f;
-
         });
 
         clickViewRight.setOnClickListener(v -> {
@@ -144,17 +155,30 @@ public class MainActivity extends AppCompatActivity {
             change = -20f;
             leftOrRight = 0;
             leftOrRight += 6f;
-            immortality.setVisibility(View.VISIBLE);
+        });
+
+        immortalityImageView.setOnClickListener(v -> {
+            immortalityImageView.setClickable(false);
+            immortalityBubble.setVisibility(View.VISIBLE);
+            immortalityBool = true;
+            currentScore = score;
+            Handler h = new Handler();
+            h.postDelayed(() -> {
+                immortalityBool = false;
+                immortalityImageView.setBackgroundColor(Color.parseColor("#e4cd05"));
+                immortalityBubble.setVisibility(View.INVISIBLE);
+            }, 2000);
+
 
         });
 
+        teleportImageView.setOnClickListener(v -> kunaImageView.setY(kunaImageView.getY() + 500));
 
         button.setOnClickListener(v -> {
             Timer gameThread = new Timer();
             kunaImageView.setY(height / 3);
             int delay = 16; // delay for 0.17 sec.
-            int period = 17; // repeat every sec.
-
+            int period = 16; // repeat every sec.
             change = 1f;
             setUpBeggining(r);
 
@@ -163,10 +187,8 @@ public class MainActivity extends AppCompatActivity {
 //            collisionDetectionThread.scheduleAtFixedRate(new TimerTask() {
 //                @Override
 //                public void run() {
-//
-//                    if (wasCollision(cd)) {
+//                    if (!immortalityBool && wasCollision(cd)) {
 //                        Thread.currentThread().toString();
-//                        Log.d("123456", "run: " + Thread.currentThread().toString());
 //                        gameThread.cancel();
 //                        gameThread.purge();
 //                        collisionDetectionThread.cancel();
@@ -183,6 +205,17 @@ public class MainActivity extends AppCompatActivity {
                     if (end - startClid < 400) {
 //                        change-=1f;
                     }
+
+
+
+                    if (currentScore + 5 <= score) {
+                        runOnUiThread(()-> {
+                            immortalityImageView.setClickable(true);
+                            immortalityImageView.setBackgroundColor(Color.parseColor("#d3d3d3"));
+                        });
+                    }
+
+
                     //move obstacles back to the top
                     if (leftIce.getY() >= height) {
                         int i1 = r.nextInt(80) + 10;
@@ -220,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                         change = 0;
                     } else {
                         //game
-                        change += 1.5;
+                        change += 0.15;
                         runOnUiThread(() -> {
                             kunaImageView.setY(kunaImageView.getY() + change);
                             kunaImageView.setX(kunaImageView.getX() + leftOrRight);
@@ -230,8 +263,8 @@ public class MainActivity extends AppCompatActivity {
                             secondRightIce.setY(secondLeftIce.getY() + boxChange);
                             thirdLeftIce.setY(thirdLeftIce.getY() + boxChange);
                             thirdRightIce.setY(thirdLeftIce.getY() + boxChange);
-                            immortality.setX(kunaImageView.getX() - immortality.getWidth() / 2f + kunaImageView.getWidth() / 2f);
-                            immortality.setY(kunaImageView.getY() - kunaImageView.getWidth() / 2f);
+                            immortalityBubble.setX(kunaImageView.getX() - immortalityBubble.getWidth() / 2f + kunaImageView.getWidth() / 2f);
+                            immortalityBubble.setY(kunaImageView.getY() - kunaImageView.getWidth() / 2f);
                         });
                     }
                 }
