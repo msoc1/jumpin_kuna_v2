@@ -54,20 +54,17 @@ public class CollisionDetection {
 
         if (firstObjectLeftBottomY >= secondObjectLeftTopY && firstObjectLeftBottomY <= secondObjectLeftBottomY) {
             if (firstObjectLeftBottomX >= secondObjectLeftTopX && firstObjectLeftBottomX <= secondObjectRightTopX) {
-                Log.d("123456", "collision: bottom left");
                 return true;
             }
         }
         if (firstObjectRightBottomY >= secondObjectLeftTopY && firstObjectRightBottomY <= secondObjectLeftBottomY) {
             if (firstObjectRightBottomX >= secondObjectLeftTopX && firstObjectRightBottomX <= secondObjectRightTopX) {
-                Log.d("123456", "collision: bottom right");
                 return true;
             }
         }
 
         if (firstObjectLeftTopY <= secondObjectLeftBottomY && firstObjectLeftTopY >= secondObjectRightTopY) {
             if (firstObjectLeftTopX >= secondObjectLeftBottomX && firstObjectLeftTopX <= secondObjectRightBottomX) {
-                Log.d("123456", "collision: top left");
                 return true;
             }
         }
@@ -75,7 +72,6 @@ public class CollisionDetection {
 
         if ((firstObjectRightTopY <= secondObjectLeftBottomY && firstObjectRightTopY >= secondObjectRightTopY)) {
             if (firstObjectRightTopX >= secondObjectLeftBottomX && firstObjectRightTopX <= secondObjectRightBottomX) {
-                Log.d("123456", "collision: top right ");
                 return true;
             }
         }
