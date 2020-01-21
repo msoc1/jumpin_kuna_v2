@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     static ViewGroup.MarginLayoutParams mlp;
     int activeObstacle = 0;
     int score;
-    static int currentScore=100;
+    static int currentScore = 0;
 
 
     @Override
@@ -73,74 +73,15 @@ public class MainActivity extends AppCompatActivity {
         width = displayMetrics.widthPixels;
 
         CollisionDetection cd = new CollisionDetection();
-
-        kunaImageView = findViewById(R.id.kuna_image_view);
-        button = findViewById(R.id.button);
-        clickViewLeft = findViewById(R.id.clickViewLeft);
-        clickViewRight = findViewById(R.id.clickViewRight);
-
-        firstGuideline = findViewById(R.id.guideline);
-        secondGuideline = findViewById(R.id.second_guide_line);
-        thirdGuideLine = findViewById(R.id.third_guide_line);
-        leftIce = findViewById(R.id.left_ice_view);
-        rightIce = findViewById(R.id.right_ice_view);
-        leftIce.setVisibility(View.INVISIBLE);
-        rightIce.setVisibility(View.INVISIBLE);
-        immortalityBubble = findViewById(R.id.immortality_circle);
-        constraintLayout = findViewById(R.id.constraint);
-        scoreTextView = findViewById(R.id.score_text);
-        immortalityImageView = findViewById(R.id.immortality_image_view);
-        immortalityBubble.setVisibility(View.INVISIBLE);
-        teleportImageView = findViewById(R.id.teleport_image_view);
-        secondLeftIce = new ImageView(this);
-        thirdLeftIce = new ImageView(this);
-        secondRightIce = new ImageView(this);
-        thirdRightIce = new ImageView(this);
-        secondLeftIce.setImageResource(R.drawable.left_ice);
-        secondRightIce.setImageResource(R.drawable.right_ice);
-        thirdLeftIce.setImageResource(R.drawable.left_ice);
-        thirdRightIce.setImageResource(R.drawable.right_ice);
-        secondLeftIce.setY(leftIce.getY() - discanceBetweenIces - secondLeftIce.getHeight());
-        secondRightIce.setY(secondLeftIce.getY());
-        thirdLeftIce.setY(secondLeftIce.getY() - discanceBetweenIces - secondLeftIce.getHeight());
-        thirdRightIce.setY(thirdLeftIce.getY());
-        constraintLayout.addView(secondLeftIce);
-        constraintLayout.addView(thirdLeftIce);
-        constraintLayout.addView(secondRightIce);
-        constraintLayout.addView(thirdRightIce);
         ConstraintSet constraintSet = new ConstraintSet();
-        secondLeftIce.setId(328);
-        secondRightIce.setId(528);
-        thirdLeftIce.setId(428);
-        thirdRightIce.setId(628);
+        settingUpViews();
         constraintSet.clone(constraintLayout);
         mlp = (ViewGroup.MarginLayoutParams) leftIce.getLayoutParams();
         constraintSet.applyTo(constraintLayout);
         setContentView(constraintLayout);
+        settingUpObstacleDimens();
 
-
-        constraintLayout.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            secondLeftIce.getLayoutParams().width = leftIce.getWidth();
-            secondLeftIce.getLayoutParams().height = leftIce.getHeight();
-            secondLeftIce.setBackgroundColor(Color.parseColor("#e4cd05"));
-            secondLeftIce.requestLayout();
-
-            secondRightIce.getLayoutParams().width = leftIce.getWidth();
-            secondRightIce.getLayoutParams().height = leftIce.getHeight();
-            secondRightIce.setBackgroundColor(Color.parseColor("#e4cd05"));
-            secondRightIce.requestLayout();
-
-            thirdLeftIce.getLayoutParams().width = leftIce.getWidth();
-            thirdLeftIce.getLayoutParams().height = leftIce.getHeight();
-            thirdLeftIce.setBackgroundColor(Color.parseColor("#ffffff"));
-            thirdLeftIce.requestLayout();
-            thirdRightIce.getLayoutParams().width = leftIce.getWidth();
-            thirdRightIce.getLayoutParams().height = leftIce.getHeight();
-            thirdRightIce.setBackgroundColor(Color.parseColor("#ffffff"));
-            thirdRightIce.requestLayout();
-        });
-
-        Random r = new Random();
+        Random randomForGuidelines = new Random();
 
 
         clickViewLeft.setOnClickListener(v -> {
@@ -168,8 +109,6 @@ public class MainActivity extends AppCompatActivity {
                 immortalityImageView.setBackgroundColor(Color.parseColor("#e4cd05"));
                 immortalityBubble.setVisibility(View.INVISIBLE);
             }, 2000);
-
-
         });
 
         teleportImageView.setOnClickListener(v -> kunaImageView.setY(kunaImageView.getY() + 500));
@@ -180,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             int delay = 16; // delay for 0.17 sec.
             int period = 16; // repeat every sec.
             change = 1f;
-            setUpBeggining(r);
+            setUpBeggining(randomForGuidelines);
 
             //commented for testing purposes
 //            Timer collisionDetectionThread = new Timer();
@@ -207,9 +146,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
 
-
                     if (currentScore + 5 <= score) {
-                        runOnUiThread(()-> {
+                        runOnUiThread(() -> {
                             immortalityImageView.setClickable(true);
                             immortalityImageView.setBackgroundColor(Color.parseColor("#d3d3d3"));
                         });
@@ -218,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //move obstacles back to the top
                     if (leftIce.getY() >= height) {
-                        int i1 = r.nextInt(80) + 10;
+                        int i1 = randomForGuidelines.nextInt(80) + 10;
                         firstGuideline.setX((i1 / 100f) * width);
                         rightIce.setY(thirdRightIce.getY() - discanceBetweenIces - leftIce.getHeight());
                         leftIce.setY(rightIce.getY());
@@ -226,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                         rightIce.setX(firstGuideline.getX() + mlp.rightMargin);
                     }
                     if (secondLeftIce.getY() >= height) {
-                        int i1 = r.nextInt(80) + 10;
+                        int i1 = randomForGuidelines.nextInt(80) + 10;
                         secondGuideline.setX((i1 / 100f) * width);
                         secondRightIce.setY(rightIce.getY() - discanceBetweenIces - rightIce.getHeight());
                         secondLeftIce.setY(leftIce.getY() - discanceBetweenIces - leftIce.getHeight());
@@ -234,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                         secondRightIce.setX(secondGuideline.getX() + mlp.rightMargin);
                     }
                     if (thirdLeftIce.getY() >= height) {
-                        moveObstaclesToTop(r, thirdGuideLine, thirdLeftIce, thirdRightIce);
+                        moveObstaclesToTop(randomForGuidelines, thirdGuideLine, thirdLeftIce, thirdRightIce);
                     }
 
 
@@ -253,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
                         change = 0;
                     } else {
                         //game
-                        change += 0.15;
+                        change += 1.5;
                         runOnUiThread(() -> {
                             kunaImageView.setY(kunaImageView.getY() + change);
                             kunaImageView.setX(kunaImageView.getX() + leftOrRight);
@@ -301,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
         secondRightIce.setX(secondGuideline.getX() + mlp.rightMargin);
         thirdLeftIce.setX(thirdGuideLine.getX() - mlp.rightMargin - thirdLeftIce.getWidth());
         thirdRightIce.setX(thirdGuideLine.getX() + mlp.rightMargin);
+        runOnUiThread(() -> scoreTextView.setText(String.valueOf(score)));
     }
 
     public void addPoints() {
@@ -341,6 +280,66 @@ public class MainActivity extends AppCompatActivity {
         rightIce.setX(guideline.getX() + mlp.rightMargin);
     }
 
+    private void settingUpObstacleDimens() {
+        constraintLayout.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            secondLeftIce.getLayoutParams().width = leftIce.getWidth();
+            secondLeftIce.getLayoutParams().height = leftIce.getHeight();
+            secondLeftIce.setBackgroundColor(Color.parseColor("#e4cd05"));
+            secondLeftIce.requestLayout();
+            secondRightIce.getLayoutParams().width = leftIce.getWidth();
+            secondRightIce.getLayoutParams().height = leftIce.getHeight();
+            secondRightIce.setBackgroundColor(Color.parseColor("#e4cd05"));
+            secondRightIce.requestLayout();
+            thirdLeftIce.getLayoutParams().width = leftIce.getWidth();
+            thirdLeftIce.getLayoutParams().height = leftIce.getHeight();
+            thirdLeftIce.setBackgroundColor(Color.parseColor("#ffffff"));
+            thirdLeftIce.requestLayout();
+            thirdRightIce.getLayoutParams().width = leftIce.getWidth();
+            thirdRightIce.getLayoutParams().height = leftIce.getHeight();
+            thirdRightIce.setBackgroundColor(Color.parseColor("#ffffff"));
+            thirdRightIce.requestLayout();
+        });
+    }
+
+    public void settingUpViews() {
+        kunaImageView = findViewById(R.id.kuna_image_view);
+        button = findViewById(R.id.button);
+        clickViewLeft = findViewById(R.id.clickViewLeft);
+        clickViewRight = findViewById(R.id.clickViewRight);
+        firstGuideline = findViewById(R.id.guideline);
+        secondGuideline = findViewById(R.id.second_guide_line);
+        thirdGuideLine = findViewById(R.id.third_guide_line);
+        leftIce = findViewById(R.id.left_ice_view);
+        rightIce = findViewById(R.id.right_ice_view);
+        leftIce.setVisibility(View.INVISIBLE);
+        rightIce.setVisibility(View.INVISIBLE);
+        immortalityBubble = findViewById(R.id.immortality_circle);
+        constraintLayout = findViewById(R.id.constraint);
+        scoreTextView = findViewById(R.id.score_text);
+        immortalityImageView = findViewById(R.id.immortality_image_view);
+        immortalityBubble.setVisibility(View.INVISIBLE);
+        teleportImageView = findViewById(R.id.teleport_image_view);
+        secondLeftIce = new ImageView(this);
+        thirdLeftIce = new ImageView(this);
+        secondRightIce = new ImageView(this);
+        thirdRightIce = new ImageView(this);
+        secondLeftIce.setImageResource(R.drawable.left_ice);
+        secondRightIce.setImageResource(R.drawable.right_ice);
+        thirdLeftIce.setImageResource(R.drawable.left_ice);
+        thirdRightIce.setImageResource(R.drawable.right_ice);
+        secondLeftIce.setY(leftIce.getY() - discanceBetweenIces - secondLeftIce.getHeight());
+        secondRightIce.setY(secondLeftIce.getY());
+        thirdLeftIce.setY(secondLeftIce.getY() - discanceBetweenIces - secondLeftIce.getHeight());
+        thirdRightIce.setY(thirdLeftIce.getY());
+        constraintLayout.addView(secondLeftIce);
+        constraintLayout.addView(thirdLeftIce);
+        constraintLayout.addView(secondRightIce);
+        constraintLayout.addView(thirdRightIce);
+        secondLeftIce.setId(328);
+        secondRightIce.setId(528);
+        thirdLeftIce.setId(428);
+        thirdRightIce.setId(628);
+    }
 
 }
 

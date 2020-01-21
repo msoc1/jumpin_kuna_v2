@@ -51,26 +51,43 @@ public class CollisionDetection {
         secondObjectRightBottomX = secObjGetX + secObjWidth - iceObstacleMargin;
         secondObjectRightBottomY = secObjGetY + secObjHeight - iceObstacleMargin;
 
-
+        //check for top bottom corner
         if (firstObjectLeftBottomY >= secondObjectLeftTopY && firstObjectLeftBottomY <= secondObjectLeftBottomY) {
+            if (firstObjectLeftBottomX >= secondObjectLeftTopX && firstObjectLeftBottomX <= secondObjectRightTopX) {
+                return false;
+            }
+        }
+
+        //check for middle of right X edge
+        if (firstObjectLeftBottomY - (firObjHeight / 2) >= secondObjectLeftTopY && firstObjectLeftBottomY - (firObjHeight / 2) <= secondObjectLeftBottomY) {
             if (firstObjectLeftBottomX >= secondObjectLeftTopX && firstObjectLeftBottomX <= secondObjectRightTopX) {
                 return true;
             }
         }
+
+        //check for right bottom corner
         if (firstObjectRightBottomY >= secondObjectLeftTopY && firstObjectRightBottomY <= secondObjectLeftBottomY) {
             if (firstObjectRightBottomX >= secondObjectLeftTopX && firstObjectRightBottomX <= secondObjectRightTopX) {
                 return true;
             }
         }
 
+        //check for top left  corner
         if (firstObjectLeftTopY <= secondObjectLeftBottomY && firstObjectLeftTopY >= secondObjectRightTopY) {
             if (firstObjectLeftTopX >= secondObjectLeftBottomX && firstObjectLeftTopX <= secondObjectRightBottomX) {
                 return true;
             }
         }
 
-
+        //check for right top corner
         if ((firstObjectRightTopY <= secondObjectLeftBottomY && firstObjectRightTopY >= secondObjectRightTopY)) {
+            if (firstObjectRightTopX >= secondObjectLeftBottomX && firstObjectRightTopX <= secondObjectRightBottomX) {
+                return true;
+            }
+        }
+
+        //check for middle of right X edge
+        if ((firstObjectRightTopY + firObjHeight / 2 <= secondObjectLeftBottomY && firstObjectRightTopY + firObjHeight / 2 >= secondObjectRightTopY)) {
             if (firstObjectRightTopX >= secondObjectLeftBottomX && firstObjectRightTopX <= secondObjectRightBottomX) {
                 return true;
             }
