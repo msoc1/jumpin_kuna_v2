@@ -6,139 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@drawable/bg"
-    android:id="@+id/constraint">
+    android:id="@+id/constraint_main">
 
-
-    <ImageView
-        android:id="@+id/kuna_image_view"
-        android:layout_width="30dp"
-        android:layout_height="90dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.65"
-        app:srcCompat="@drawable/left" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="start"
+        android:id="@+id/start_game"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:text="start game"
+        android:background="#00ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <View
-        android:id="@+id/clickViewLeft"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/click_goudline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/clickViewRight"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/click_goudline"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/left_ice_view"
-        android:layout_width="320dp"
-        android:layout_height="70dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginRight="60dp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
-        app:srcCompat="@drawable/left_ice"
-        tools:layout_editor_absoluteY="366dp"
-        tools:ignore="MissingConstraints" />
-
-    <View
-        android:id="@+id/guideline"
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        tools:ignore="MissingConstraints" />
-    <View
-        android:id="@+id/second_guide_line"
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        tools:ignore="MissingConstraints" />
-    <View
-        android:id="@+id/third_guide_line"
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        tools:ignore="MissingConstraints" />
-
-    <ImageView
-        android:id="@+id/right_ice_view"
-        android:layout_width="320dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginLeft="60dp"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:srcCompat="@drawable/right_ice"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="358dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/click_goudline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
-
-    <ImageView
-        android:id="@+id/immortality_circle"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/kuna_image_view"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@+id/kuna_image_view"
-        app:layout_constraintStart_toStartOf="@+id/kuna_image_view"
-        app:layout_constraintTop_toTopOf="@+id/kuna_image_view"
-        app:srcCompat="@drawable/immortality_bubble" />
-
-    <TextView
-        android:id="@+id/score_text"
-        android:layout_width="155dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="60dp"
-        android:gravity="center"
-        android:hint="0"
-        android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/immortality_image_view"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/immortality_bubble" />
-
-    <ImageView
-        android:id="@+id/teleport_image_view"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/teleport" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
