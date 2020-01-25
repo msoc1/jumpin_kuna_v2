@@ -50,6 +50,7 @@ public class GameFragment extends Fragment {
     static int height;
     static int width;
 
+    //TODO change those to an ImageView[] for simplification
     ImageView secondLeftIce;
     ImageView secondRightIce;
     ImageView thirdLeftIce;
@@ -70,6 +71,7 @@ public class GameFragment extends Fragment {
 
     static float change = 0;
     static long startClid;
+    //TODO change obstacle speed and distance based on user score
     static float boxChange = 10f;
     int discanceBetweenIces = 800;
     static ViewGroup.MarginLayoutParams mlp;
@@ -206,6 +208,11 @@ public class GameFragment extends Fragment {
                         gameThread.cancel();
                         gameThread.purge();
                         change = 0;
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("SCORE", score);
+                        GameLostFragment gameLostFragment = new GameLostFragment();
+                        gameLostFragment.setArguments(bundle);
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.constraint_main, gameLostFragment).commit();
                     } else {
                         //game
                         change += 1.5;
@@ -328,6 +335,7 @@ public class GameFragment extends Fragment {
     }
 
     public void moveObstaclesToTop(Random r, View guideline, View leftIce, View rightIce) {
+        //TODO simplify this method to work for N number of obstacles
         int i1 = r.nextInt(80) + 10;
         guideline.setX((i1 / 100f) * width);
         leftIce.setY(secondLeftIce.getY() - discanceBetweenIces - leftIce.getHeight());
