@@ -130,7 +130,7 @@ public class GameFragment extends Fragment {
                 immortalityBool = false;
                 immortalityImageView.setBackgroundColor(Color.parseColor("#e4cd05"));
                 immortalityBubble.setVisibility(View.INVISIBLE);
-            }, 2000);
+            }, 10000);
         });
 
         teleportImageView.setOnClickListener(v -> kunaImageView.setY(kunaImageView.getY() + 500));
@@ -145,6 +145,7 @@ public class GameFragment extends Fragment {
             setUpBeggining(randomForGuidelines);
             runStartTime = System.currentTimeMillis();
 
+
             //commented for testing purposes
 //            Timer collisionDetectionThread = new Timer();
 //            collisionDetectionThread.scheduleAtFixedRate(new TimerTask() {
@@ -156,6 +157,7 @@ public class GameFragment extends Fragment {
 //                        gameThread.purge();
 //                        collisionDetectionThread.cancel();
 //                        collisionDetectionThread.purge();
+//                        gameLost();
 //                    }
 //                }
 //            }, delay, period);
@@ -212,15 +214,10 @@ public class GameFragment extends Fragment {
                     if (kunaImageView.getY() + kunaImageView.getHeight() >= height) {
                         gameThread.cancel();
                         gameThread.purge();
+//                        collisionDetectionThread.cancel();
+//                        collisionDetectionThread.purge();
                         change = 0;
-                        runEndTime = System.currentTimeMillis();
-                        int runTime = (int) (runEndTime-runStartTime);
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("SCORE", score);
-                        bundle.putInt("TIME", runTime);
-                        GameLostFragment gameLostFragment = new GameLostFragment();
-                        gameLostFragment.setArguments(bundle);
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.constraint_main, gameLostFragment).commit();
+                        gameLost();
                     } else {
                         //game
                         change += 1.5;
@@ -250,6 +247,17 @@ public class GameFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+    }
+
+    public void gameLost(){
+        runEndTime = System.currentTimeMillis();
+        int runTime = (int) (runEndTime-runStartTime);
+        Bundle bundle = new Bundle();
+        bundle.putInt("SCORE", score);
+        bundle.putInt("TIME", runTime);
+        GameLostFragment gameLostFragment = new GameLostFragment();
+        gameLostFragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.constraint_main, gameLostFragment).commit();
     }
 
     public void setUpBeggining(Random r) {

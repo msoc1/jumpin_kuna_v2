@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.fixed4fun.jumpingkunav2.MainActivity;
 import com.fixed4fun.jumpingkunav2.R;
+import com.fixed4fun.jumpingkunav2.StartFragment;
 
 
 /**
@@ -31,6 +32,7 @@ public class GameLostFragment extends Fragment {
     private TextView yourScore;
     private TextView yourTime;
     private GameFragment gameFragment;
+    private StartFragment startFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,22 +49,20 @@ public class GameLostFragment extends Fragment {
         if (bundle != null) {
             yourScore.setText(String.valueOf(bundle.getInt("SCORE")));
             int time = bundle.getInt("TIME");
-            String timeToSet = time/1000 + ":" +  time%1000 + "s";
+            String timeToSet = time / 1000 + ":" + time % 1000 + "s";
             yourTime.setText(timeToSet);
         }
 
 
         gameFragment = new GameFragment();
+        startFragment = new StartFragment();
         newGame = inflatedView.findViewById(R.id.new_game_from_lost);
         newGame.setOnClickListener(va -> {
             getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, gameFragment).commit();
         });
 
         goToHome.setOnClickListener( va -> {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-
+            getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, startFragment).commit();
         });
 
 
