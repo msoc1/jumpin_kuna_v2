@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.fixed4fun.jumpingkunav2.GameFragments;
 
 
 import android.graphics.Color;
@@ -19,7 +19,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.R;
+import com.fixed4fun.jumpingkunav2.CollisionDetection;
+import com.fixed4fun.jumpingkunav2.R;
 
 import java.util.Random;
 import java.util.Timer;
@@ -37,7 +38,7 @@ public class GameFragment extends Fragment {
     }
 
     ImageView kunaImageView;
-    Button button;
+    Button startGameButton;
     View clickViewLeft;
     View clickViewRight;
 
@@ -78,6 +79,8 @@ public class GameFragment extends Fragment {
     int activeObstacle = 0;
     int score;
     static int currentScore = 0;
+    long runStartTime;
+    long runEndTime;
 
 
     @Override
@@ -132,13 +135,15 @@ public class GameFragment extends Fragment {
 
         teleportImageView.setOnClickListener(v -> kunaImageView.setY(kunaImageView.getY() + 500));
 
-        button.setOnClickListener(v -> {
+        startGameButton.setOnClickListener(v -> {
+            startGameButton.setVisibility(View.INVISIBLE);
             Timer gameThread = new Timer();
             kunaImageView.setY(height / 3);
             int delay = 16; // delay for 0.17 sec.
             int period = 16; // repeat every sec.
             change = 1f;
             setUpBeggining(randomForGuidelines);
+            runStartTime = System.currentTimeMillis();
 
             //commented for testing purposes
 //            Timer collisionDetectionThread = new Timer();
@@ -208,8 +213,11 @@ public class GameFragment extends Fragment {
                         gameThread.cancel();
                         gameThread.purge();
                         change = 0;
+                        runEndTime = System.currentTimeMillis();
+                        int runTime = (int) (runEndTime-runStartTime);
                         Bundle bundle = new Bundle();
                         bundle.putInt("SCORE", score);
+                        bundle.putInt("TIME", runTime);
                         GameLostFragment gameLostFragment = new GameLostFragment();
                         gameLostFragment.setArguments(bundle);
                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.constraint_main, gameLostFragment).commit();
@@ -275,7 +283,7 @@ public class GameFragment extends Fragment {
 
     public void settingUpViews(View view) {
         kunaImageView = view.findViewById(R.id.kuna_image_view);
-        button = view.findViewById(R.id.button);
+        startGameButton = view.findViewById(R.id.start_game_button);
         clickViewLeft = view.findViewById(R.id.clickViewLeft);
         clickViewRight = view.findViewById(R.id.clickViewRight);
         firstGuideline = view.findViewById(R.id.guideline);
@@ -317,19 +325,15 @@ public class GameFragment extends Fragment {
         constraintLayout.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             secondLeftIce.getLayoutParams().width = leftIce.getWidth();
             secondLeftIce.getLayoutParams().height = leftIce.getHeight();
-            secondLeftIce.setBackgroundColor(Color.parseColor("#e4cd05"));
             secondLeftIce.requestLayout();
             secondRightIce.getLayoutParams().width = leftIce.getWidth();
             secondRightIce.getLayoutParams().height = leftIce.getHeight();
-            secondRightIce.setBackgroundColor(Color.parseColor("#e4cd05"));
             secondRightIce.requestLayout();
             thirdLeftIce.getLayoutParams().width = leftIce.getWidth();
             thirdLeftIce.getLayoutParams().height = leftIce.getHeight();
-            thirdLeftIce.setBackgroundColor(Color.parseColor("#ffffff"));
             thirdLeftIce.requestLayout();
             thirdRightIce.getLayoutParams().width = leftIce.getWidth();
             thirdRightIce.getLayoutParams().height = leftIce.getHeight();
-            thirdRightIce.setBackgroundColor(Color.parseColor("#ffffff"));
             thirdRightIce.requestLayout();
         });
     }

@@ -6,6 +6,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/FontFamilyTextView</item>
+    </style>
+
+    <style name="FontFamilyTextView" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/press_start_2p</item>
+    </style>
+
+    <style name="FontFamilyButtons">
+        <item name="android:fontFamily">@font/press_start_2p</item>
+        <item name="textAllCaps">true</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:padding">16dp</item>
     </style>
 
 </resources>

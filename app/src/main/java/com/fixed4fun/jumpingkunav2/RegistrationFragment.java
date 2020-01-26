@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.fixed4fun.jumpingkunav2;
 
 
 import android.os.Bundle;

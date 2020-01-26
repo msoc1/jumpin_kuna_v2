@@ -9,6 +9,18 @@
     android:id="@+id/constraint">
 
 
+    <Button
+        android:id="@+id/start_game_button"
+        style="@style/FontFamilyButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9" />
+
     <ImageView
         android:id="@+id/kuna_image_view"
         android:layout_width="30dp"
@@ -21,15 +33,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.65"
         app:srcCompat="@drawable/left" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="start"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <View
         android:id="@+id/clickViewLeft"
@@ -114,6 +117,7 @@
         android:gravity="center"
         android:hint="0"
         android:textSize="48sp"
+        app:fontFamily="@font/press_start_2p"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

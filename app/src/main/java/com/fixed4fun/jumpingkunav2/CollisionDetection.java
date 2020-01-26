@@ -1,6 +1,5 @@
-package com.example.myapplication;
+package com.fixed4fun.jumpingkunav2;
 
-import android.util.Log;
 import android.widget.ImageView;
 
 public class CollisionDetection {
