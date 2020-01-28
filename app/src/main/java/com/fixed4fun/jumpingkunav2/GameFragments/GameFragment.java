@@ -361,21 +361,19 @@ public class GameFragment extends Fragment {
             if (kunaImageView.getY() <= leftIce.getY()) {
                 activeObstacle = 1;
                 score++;
-                getActivity().runOnUiThread(() -> scoreTextView.setText(String.valueOf(score)));
             }
         } else if (activeObstacle == 1) {
             if (kunaImageView.getY() <= secondLeftIce.getY()) {
                 activeObstacle = 2;
                 score++;
-                getActivity().runOnUiThread(() -> scoreTextView.setText(String.valueOf(score)));
             }
         } else {
             if (kunaImageView.getY() <= thirdLeftIce.getY()) {
                 activeObstacle = 0;
                 score++;
-                getActivity().runOnUiThread(() -> scoreTextView.setText(String.valueOf(score)));
             }
         }
+        getActivity().runOnUiThread(() -> scoreTextView.setText(String.valueOf(score)));
     }
 
     public boolean wasCollision(CollisionDetection cd) {

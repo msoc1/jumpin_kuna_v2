@@ -10,8 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.fixed4fun.jumpingkunav2.GameFragments.GameFragment;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,6 +37,8 @@ public class StartFragment extends Fragment {
     static float boxChange = 0f;
     ImageView left;
     ImageView right;
+    private FirebaseAuth firebaseAuth;
+    private String username;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,6 +59,22 @@ public class StartFragment extends Fragment {
         GameFragment gameFragment = new GameFragment();
         RegistrationFragment registrationFragment = new RegistrationFragment();
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        if (firebaseAuth.getCurrentUser() != null) {
+            String fullName = firebaseAuth.getCurrentUser().getEmail();
+            username = fullName.split("@")[0];
+        } else {
+            username = "";
+        }
+
+        if (firebaseAuth.getCurrentUser() == null) {
+            logInRegister.setText("log in");
+        } else {
+            String fullName = firebaseAuth.getCurrentUser().getEmail();
+            username = fullName.split("@")[0];
+            logInRegister.setText("log out " + username);
+        }
+
         Timer jumpInBackground = new Timer();
         startGame.setOnClickListener(v -> {
             getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, gameFragment).commit();
@@ -62,9 +83,17 @@ public class StartFragment extends Fragment {
         });
 
         logInRegister.setOnClickListener(v -> {
-            getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, registrationFragment).commit();
-            jumpInBackground.purge();
-            jumpInBackground.cancel();
+            if (firebaseAuth.getCurrentUser() == null) {
+                getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, registrationFragment).commit();
+                jumpInBackground.purge();
+                jumpInBackground.cancel();
+            } else {
+                String fullName = firebaseAuth.getCurrentUser().getEmail();
+                username = fullName.split("@")[0];
+                Toast.makeText(getContext(), "Signing out" + " " + username, Toast.LENGTH_SHORT).show();
+                logInRegister.setText("SIGN IN");
+                firebaseAuth.signOut();
+            }
         });
 
 
@@ -91,6 +120,14 @@ public class StartFragment extends Fragment {
 
 
         return view;
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
 
     }
 
