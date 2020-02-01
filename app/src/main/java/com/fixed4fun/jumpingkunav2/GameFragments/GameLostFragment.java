@@ -14,7 +14,11 @@ import android.widget.TextView;
 
 import com.fixed4fun.jumpingkunav2.MainActivity;
 import com.fixed4fun.jumpingkunav2.R;
+import com.fixed4fun.jumpingkunav2.Score;
 import com.fixed4fun.jumpingkunav2.StartFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -33,6 +37,9 @@ public class GameLostFragment extends Fragment {
     private TextView yourTime;
     private GameFragment gameFragment;
     private StartFragment startFragment;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase mFirebaseDatabaseInstance;
+    private DatabaseReference mFirebaseDatabase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +60,23 @@ public class GameLostFragment extends Fragment {
             yourTime.setText(timeToSet);
         }
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabaseInstance = FirebaseDatabase.getInstance();
+
+        if (bundle.getInt("SCORE") > 5) {
+            String username;
+            if (firebaseAuth.getCurrentUser() == null) {
+                username = "anonymous";
+            } else {
+                String fullName = firebaseAuth.getCurrentUser().getEmail();
+                username = fullName.split("@")[0];
+            }
+
+            Score currentScore = new Score(username, bundle.getInt("TIME"), bundle.getInt("SCORE"));
+
+            mFirebaseDatabase = mFirebaseDatabaseInstance.getReference("scores");
+            mFirebaseDatabase.push().setValue(currentScore);
+        }
 
         gameFragment = new GameFragment();
         startFragment = new StartFragment();

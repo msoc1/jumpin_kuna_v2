@@ -32,6 +32,7 @@ public class StartFragment extends Fragment {
 
     Button startGame;
     Button logInRegister;
+    Button goToRanking;
     ImageView kuna;
     static float change = 0f;
     static float boxChange = 0f;
@@ -55,9 +56,12 @@ public class StartFragment extends Fragment {
         kuna = view.findViewById(R.id.kuna);
         left = view.findViewById(R.id.main_leftice);
         right = view.findViewById(R.id.main_rightice);
+        goToRanking = view.findViewById(R.id.go_to_ranking);
         logInRegister = view.findViewById(R.id.login_register);
         GameFragment gameFragment = new GameFragment();
         RegistrationFragment registrationFragment = new RegistrationFragment();
+        RankingFragment rankingFragment = new RankingFragment();
+
 
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
@@ -94,6 +98,12 @@ public class StartFragment extends Fragment {
                 logInRegister.setText("SIGN IN");
                 firebaseAuth.signOut();
             }
+        });
+
+        goToRanking.setOnClickListener( v->{
+            getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, rankingFragment).commit();
+            jumpInBackground.purge();
+            jumpInBackground.cancel();
         });
 
 
