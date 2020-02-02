@@ -67,7 +67,7 @@ public class RegistrationFragment extends Fragment {
             password = passwordEditText.getText().toString().trim();
             if (username.isEmpty()) {
                 Toast.makeText(getContext(), "Enter username!", Toast.LENGTH_SHORT).show();
-            } else if (username.length() > 14) {
+            } else if (username.length() > 12) {
                 Toast.makeText(getContext(), "Username too long!", Toast.LENGTH_SHORT).show();
             } else if (password.isEmpty()) {
                 Toast.makeText(getContext(), "Enter password!", Toast.LENGTH_SHORT).show();

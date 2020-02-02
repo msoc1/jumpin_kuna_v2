@@ -34,18 +34,18 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.RankingV
 
         Score score = listOfScores.get(position);
         holder.indexRanking.setText(String.valueOf(position + 1));
-        holder.pointsRanking.setText(String.valueOf(score.getScore()));
+        holder.pointsRanking.setText(String.valueOf(score.getS()));
         holder.usernameRanking.setText(score.getName());
-        long time = score.getTime();
+        long time = score.getT();
 
 
 
-//        if (time / 1000 < 60) {
+//        if (t / 1000 < 60) {
             String toSet = time / 1000 + ":" + time % 1000 + "s";
             holder.timeRanking.setText(toSet);
 //        }
 //        } else {
-//            String toSet = time / 60000 + ":" + (time % 60000) / 1000 + ":" + time % 100 + "s";
+//            String toSet = t / 60000 + ":" + (t % 60000) / 1000 + ":" + t % 100 + "s";
 //            holder.timeRanking.setText(toSet);
 //        }
     }

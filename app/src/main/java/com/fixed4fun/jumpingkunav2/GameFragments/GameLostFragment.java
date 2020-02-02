@@ -75,7 +75,7 @@ public class GameLostFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         mFirebaseDatabaseInstance = FirebaseDatabase.getInstance();
 
-        if (bundle.getInt("SCORE") > 5) {
+        if (bundle.getInt("SCORE") >= 0) {
             String username;
             if (firebaseAuth.getCurrentUser() == null) {
                 username = "anonymous";
@@ -83,12 +83,10 @@ public class GameLostFragment extends Fragment {
                 String fullName = firebaseAuth.getCurrentUser().getEmail();
                 username = fullName.split("@")[0];
             }
-            Score currentScore = new Score(username, bundle.getInt("TIME"), bundle.getInt("SCORE"));
-            mFirebaseDatabase = mFirebaseDatabaseInstance.getReference("scores");
-            mFirebaseDatabase.push().setValue(currentScore);
-//            Score n = new Score(bundle.getInt("TIME"), bundle.getInt("SCORE"));
-//            mFirebaseDatabase = mFirebaseDatabaseInstance.getReference("scores/".concat(username));
-//            mFirebaseDatabase.push().setValue(n);
+
+            Score newRecord = new Score(bundle.getInt("TIME"), bundle.getInt("SCORE"));
+            mFirebaseDatabase = mFirebaseDatabaseInstance.getReference("usrscr/".concat(username));
+            mFirebaseDatabase.push().setValue(newRecord);
         }
 
         gameFragment = new GameFragment();

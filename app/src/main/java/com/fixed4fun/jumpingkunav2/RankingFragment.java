@@ -43,6 +43,7 @@ public class RankingFragment extends Fragment {
     Button home;
     Button localRanking;
     Button globalRanking;
+    Button friendsRanking;
     RecyclerView rV;
     TextView loginText;
     ProgressBar progressBar;
@@ -53,6 +54,9 @@ public class RankingFragment extends Fragment {
     private DatabaseReference mFirebaseDatabase;
     ArrayList<Score> listOfGlobalScores = new ArrayList<>();
     ArrayList<Score> listofLocalScores = new ArrayList<>();
+    ArrayList<Score> friendList = new ArrayList<>();
+    ArrayList<Score> globalScores = new ArrayList<>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,25 +73,28 @@ public class RankingFragment extends Fragment {
         loginText = view.findViewById(R.id.log_in_textview);
         localRanking = view.findViewById(R.id.local_ranking);
         globalRanking = view.findViewById(R.id.global_ranking);
+        friendsRanking = view.findViewById(R.id.button);
         adapter = new RankingAdapter(getContext(), listOfGlobalScores);
-        if (firebaseAuth.getCurrentUser() != null) {
-            firebaseUser = firebaseAuth.getCurrentUser();
-            loginText.setVisibility(View.GONE);
-            if (!listOfGlobalScores.isEmpty()) {
-                listOfGlobalScores.clear();
-            } else {
-                prepareList();
-            }
-        }
-        globalRanking.setBackgroundColor(Color.parseColor("#1A000000"));
+//        if (firebaseAuth.getCurrentUser() != null) {
+//            firebaseUser = firebaseAuth.getCurrentUser();
+//            loginText.setVisibility(View.GONE);
+//            if (!listOfGlobalScores.isEmpty()) {
+//                listOfGlobalScores.clear();
+//            } else {
+//                prepareList();
+//            }
+//        }
 
         home.setOnClickListener(v -> {
             StartFragment startFragment = new StartFragment();
             getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, startFragment).commit();
         });
 
-        localRanking.setOnClickListener((view1) -> localRankingOnClick());
-        globalRanking.setOnClickListener(v -> globalRankingOnclick());
+        loginText.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
+        localRanking.setOnClickListener((view1) -> prepareLocalList());
+        globalRanking.setOnClickListener(v -> prepareGlobalList());
+        friendsRanking.setOnClickListener(v -> prepareFriendsList());
         rV.setLayoutManager(new LinearLayoutManager(getContext()));
         rV.setScrollbarFadingEnabled(false);
         rV.setAdapter(adapter);
@@ -95,26 +102,44 @@ public class RankingFragment extends Fragment {
         return view;
     }
 
-    public void prepareList() {
+    private void prepareGlobalList() {
+        globalRanking.setBackgroundColor(Color.parseColor("#1A000000"));
+        localRanking.setBackgroundColor(Color.TRANSPARENT);
+        friendsRanking.setBackgroundColor(Color.TRANSPARENT);
         if (!checkInternetConnection()) {
             loginText.setText("No internet");
             progressBar.setVisibility(View.GONE);
             loginText.setVisibility(View.VISIBLE);
         } else {
             mFirebaseInstance = FirebaseDatabase.getInstance();
-            mFirebaseDatabase = mFirebaseInstance.getReference("scores/");
-            mFirebaseDatabase.keepSynced(true);
+            mFirebaseDatabase = mFirebaseInstance.getReference("usrscr/");
+            mFirebaseDatabase.keepSynced(false);
             mFirebaseDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     progressBar.setVisibility(View.GONE);
                     loginText.setVisibility(View.GONE);
-                    listOfGlobalScores.clear();
-                    listofLocalScores.clear();
-                    addData(dataSnapshot);
+                    globalScores.clear();
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        for (DataSnapshot score : ds.getChildren()) {
+                            Score score2 = new Score();
+                            score2.setName(ds.getKey());
+                            score2.setT(score.getValue(Score.class).getT());
+                            score2.setS(score.getValue(Score.class).getS());
+                            globalScores.add(score2);
+                        }
+
+                    }
+                    sorting(globalScores);
+                    for (int j = 24; j < globalScores.size(); j++) {
+                        globalScores.remove(globalScores.get(j));
+                    }
+                    if (getActivity() != null) {
+                        adapter = new RankingAdapter(getContext(), globalScores);
+                    }
                     adapter.notifyDataSetChanged();
-                    sorting(listOfGlobalScores);
-                    sorting(listofLocalScores);
+                    rV.setVisibility(View.VISIBLE);
+                    rV.setAdapter(adapter);
                 }
 
                 @Override
@@ -122,20 +147,128 @@ public class RankingFragment extends Fragment {
 
                 }
             });
+
+        }
+    }
+
+    private void prepareFriendsList() {
+        globalRanking.setBackgroundColor(Color.TRANSPARENT);
+        localRanking.setBackgroundColor(Color.TRANSPARENT);
+        friendsRanking.setBackgroundColor(Color.parseColor("#1A000000"));
+        if (!checkInternetConnection()) {
+            loginText.setText("No internet");
+            progressBar.setVisibility(View.GONE);
+            loginText.setVisibility(View.VISIBLE);
+        } else {
+            if (firebaseAuth.getCurrentUser() != null) {
+                mFirebaseInstance = FirebaseDatabase.getInstance();
+                mFirebaseDatabase = mFirebaseInstance.getReference("usrscr/");
+                mFirebaseDatabase.keepSynced(false);
+                mFirebaseDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        progressBar.setVisibility(View.GONE);
+                        loginText.setVisibility(View.GONE);
+                        friendList.clear();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            String fullName = firebaseAuth.getCurrentUser().getEmail();
+                            String username = fullName.split("@")[0];
+                            //TODO implement friend list check
+                            if (ds.getKey().equals(username)) {
+                                for (DataSnapshot score : ds.getChildren()) {
+                                    Score score2 = new Score();
+                                    score2.setName(ds.getKey());
+                                    score2.setT(score.getValue(Score.class).getT());
+                                    score2.setS(score.getValue(Score.class).getS());
+                                    friendList.add(score2);
+                                }
+                            }
+                        }
+                        sorting(friendList);
+                        if (getActivity() != null) {
+                            adapter = new RankingAdapter(getContext(), friendList);
+                        }
+                        adapter.notifyDataSetChanged();
+                        rV.setAdapter(adapter);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            } else {
+                loginText.setVisibility(View.VISIBLE);
+                rV.setVisibility(View.GONE);
+            }
+        }
+
+
+    }
+
+    private void prepareLocalList() {
+        globalRanking.setBackgroundColor(Color.TRANSPARENT);
+        localRanking.setBackgroundColor(Color.parseColor("#1A000000"));
+        friendsRanking.setBackgroundColor(Color.TRANSPARENT);
+        if (!checkInternetConnection()) {
+            loginText.setText("No internet");
+            progressBar.setVisibility(View.GONE);
+            loginText.setVisibility(View.VISIBLE);
+        } else {
+            if (firebaseAuth.getCurrentUser() != null) {
+                mFirebaseInstance = FirebaseDatabase.getInstance();
+                mFirebaseDatabase = mFirebaseInstance.getReference("usrscr/");
+                mFirebaseDatabase.keepSynced(false);
+                mFirebaseDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        progressBar.setVisibility(View.GONE);
+                        loginText.setVisibility(View.GONE);
+                        listofLocalScores.clear();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            String fullName = firebaseAuth.getCurrentUser().getEmail();
+                            String username = fullName.split("@")[0];
+                            if (ds.getKey().equals(username)) {
+                                for (DataSnapshot score : ds.getChildren()) {
+                                    Score score2 = new Score();
+                                    score2.setName(ds.getKey());
+                                    score2.setT(score.getValue(Score.class).getT());
+                                    score2.setS(score.getValue(Score.class).getS());
+                                    listofLocalScores.add(score2);
+                                }
+                            }
+                        }
+                        if (listofLocalScores.isEmpty()) {
+                            loginText.setText("Go and play!");
+                            loginText.setVisibility(View.VISIBLE);
+                        }
+                        sorting(listofLocalScores);
+                        adapter = new RankingAdapter(getContext(), listofLocalScores);
+                        adapter.notifyDataSetChanged();
+                        rV.setAdapter(adapter);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            } else {
+                loginText.setVisibility(View.VISIBLE);
+                rV.setVisibility(View.GONE);
+            }
         }
     }
 
     private void sorting(ArrayList<Score> unsortedList) {
         for (int i = 0; i < unsortedList.size(); i++) {
             for (int j = i + 1; j <= unsortedList.size() - 1; j++) {
-                if (unsortedList.get(i).getScore() < unsortedList.get(j).getScore()) {
+                if (unsortedList.get(i).getS() < unsortedList.get(j).getS()) {
                     Collections.swap(unsortedList, j, i);
                 }
             }
         }
         for (int i = 0; i < unsortedList.size(); i++) {
             for (int j = i + 1; j <= unsortedList.size() - 1; j++) {
-                if (unsortedList.get(i).getScore() == unsortedList.get(j).getScore()) {
+                if (unsortedList.get(i).getS() == unsortedList.get(j).getS()) {
                     sortTime(unsortedList, unsortedList.get(i), unsortedList.get(j));
                 }
             }
@@ -143,7 +276,7 @@ public class RankingFragment extends Fragment {
     }
 
     private void sortTime(ArrayList<Score> sortingForMinutes, Score o1, Score o2) {
-        if (o1.getTime() > o2.getTime()) {
+        if (o1.getT() > o2.getT()) {
             Collections.swap(sortingForMinutes, sortingForMinutes.indexOf(o2), sortingForMinutes.indexOf(o1));
         }
     }
@@ -155,79 +288,4 @@ public class RankingFragment extends Fragment {
     }
 
 
-    private void addData(DataSnapshot dataSnapshot) {
-        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-            Score score = new Score();
-            score.setName(ds.getValue(Score.class).getName());
-            score.setTime(ds.getValue(Score.class).getTime());
-            score.setScore(ds.getValue(Score.class).getScore());
-            if (firebaseUser != null) {
-                if (firebaseUser.getEmail().equals((ds.getValue(Score.class).getName()) + "@jumpinkuna.pl")) {
-                    listofLocalScores.add(score);
-                }
-            }
-            listOfGlobalScores.add(score);
-        }
-    }
-
-    private void globalRankingOnclick() {
-        loginText.setVisibility(View.GONE);
-        if (listOfGlobalScores.isEmpty()) {
-            if (!checkInternetConnection()) {
-                loginText.setText("No internet");
-                progressBar.setVisibility(View.GONE);
-                loginText.setVisibility(View.VISIBLE);
-            } else {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-        } else {
-            progressBar.setVisibility(View.GONE);
-        }
-        localRanking.setBackgroundColor(Color.TRANSPARENT);
-        globalRanking.setBackgroundColor(Color.parseColor("#1A000000"));
-        adapter = new RankingAdapter(getContext(), listOfGlobalScores);
-        rV.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        rV.setVisibility(View.VISIBLE);
-    }
-
-    private void localRankingOnClick() {
-        globalRanking.setBackgroundColor(Color.TRANSPARENT);
-        localRanking.setBackgroundColor(Color.parseColor("#1A000000"));
-        if (firebaseAuth.getCurrentUser() != null) {
-            //User logged in, we can populate both local and global ranking, default is global ranking
-            progressBar.setVisibility(View.VISIBLE);
-            firebaseUser = firebaseAuth.getCurrentUser();
-            loginText.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
-            adapter = new RankingAdapter(getContext(), listofLocalScores);
-            rV.setAdapter(adapter);
-            if (listofLocalScores.isEmpty()) {
-                if (checkInternetConnection()) {
-                    loginText.setText("Go and play!");
-                } else {
-                    loginText.setText("No internet");
-                }
-                loginText.setVisibility(View.VISIBLE);
-            }
-            adapter.notifyDataSetChanged();
-            progressBar.setVisibility(View.GONE);
-
-        } else {
-            loginText.setVisibility(View.VISIBLE);
-            rV.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        loginText.setVisibility(View.GONE);
-        if (!listOfGlobalScores.isEmpty()) {
-            listOfGlobalScores.clear();
-        } else {
-            prepareList();
-        }
-
-    }
 }

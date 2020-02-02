@@ -5,20 +5,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Score implements Parcelable {
-    long time;
-    int score;
-    String name;
+    long t;
+    int s;
+    String n;
 
     protected Score(Parcel in) {
-        time = in.readLong();
-        score = in.readInt();
-        name = in.readString();
+        t = in.readLong();
+        s = in.readInt();
+        n = in.readString();
     }
 
 
     public Score(long time, int score) {
-        this.time = time;
-        this.score = score;
+        this.t = time;
+        this.s = score;
     }
 
     public Score() {
@@ -36,43 +36,43 @@ public class Score implements Parcelable {
         }
     };
 
-    public long getTime() {
-        return time;
+    public long getT() {
+        return t;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public void setT(long t) {
+        this.t = t;
     }
 
-    public int getScore() {
-        return score;
+    public int getS() {
+        return s;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setS(int s) {
+        this.s = s;
     }
 
     public String getName() {
-        return name;
+        return n;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.n = name;
     }
 
 
     public Score(String name, long time, int score) {
-        this.time = time;
-        this.score = score;
-        this.name = name;
+        this.t = time;
+        this.s = score;
+        this.n = name;
     }
 
     @Override
     public String toString() {
         return "Score{" +
-                " name=" + name +
-                ", time=" + time +
-                ", score=" + score +
+                " n=" + n +
+                ", t=" + t +
+                ", s=" + s +
                 '}';
     }
 
@@ -84,8 +84,8 @@ public class Score implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeLong(time);
-        parcel.writeInt(score);
-        parcel.writeString(name);
+        parcel.writeLong(t);
+        parcel.writeInt(s);
+        parcel.writeString(n);
     }
 }

@@ -99,12 +99,12 @@
 
     <TextView
         android:id="@+id/score_text"
-        android:layout_width="155dp"
-        android:layout_height="72dp"
+        android:layout_width="208dp"
+        android:layout_height="73dp"
         android:layout_marginTop="60dp"
         android:gravity="center"
         android:hint="0"
-        android:textSize="48sp"
+        android:textSize="60sp"
         app:fontFamily="@font/press_start_2p"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -10,7 +10,6 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,11 +72,11 @@ public class GameFragment extends Fragment {
     static float change = 0;
     static long startClid;
     //TODO change obstacle speed and distance based on user score
-    static float boxChange = 10f;
     int discanceBetweenIces = 900;
     static ViewGroup.MarginLayoutParams mlp;
     int activeObstacle = 0;
     int score = 1;
+    float boxChange;
     int bonusScore = 1;
     static int currentScore = 0;
     long runStartTime;
@@ -85,7 +84,7 @@ public class GameFragment extends Fragment {
     static boolean gotImmortalityBonus = false;
     Timer collisionDetectionThread = new Timer();
     Timer gameThread = new Timer();
-
+    int boxChange2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -113,13 +112,13 @@ public class GameFragment extends Fragment {
         clickViewLeft.setOnClickListener(v -> {
             change = -16f;
             leftOrRight = 0;
-            leftOrRight += -6f;
+            leftOrRight += -8f;
         });
 
         clickViewRight.setOnClickListener(v -> {
             change = -16f;
             leftOrRight = 0;
-            leftOrRight += 6f;
+            leftOrRight += 8f;
         });
 
 
@@ -147,7 +146,7 @@ public class GameFragment extends Fragment {
 //                        gameLost();
 //                    }
                     if (!gotImmortalityBonus && cd.collision(kunaImageView, bonusBubble)) {
-                        if(bonusBubble.getId()!=4444) {
+                        if (bonusBubble.getId() != 4444) {
                             getActivity().runOnUiThread(() -> counter.setVisibility(View.VISIBLE));
                         }
                         currentScore = score;
@@ -157,14 +156,14 @@ public class GameFragment extends Fragment {
                             immortalityBool = true;
                             kunaImageView.setAlpha(0.5f);
                         } else if (bonusBubble.getId() == 2222) {
-                            boxChange /= 2f;
+                            boxChange2 -= 5;
                         } else if (bonusBubble.getId() == 3333) {
                             bonusScore = 2;
                             getActivity().runOnUiThread(() -> bonusPoints.setVisibility(View.VISIBLE));
                         } else if (bonusBubble.getId() == 4444) {
                             runStartTime = runStartTime + 5000;
-                            bonusSeconds.append("\n-5s");
                             getActivity().runOnUiThread(() -> {
+                                bonusSeconds.append("\n-5s");
                                 bonusSeconds.setVisibility(View.VISIBLE);
                                 counter.setVisibility(View.INVISIBLE);
                             });
@@ -178,6 +177,7 @@ public class GameFragment extends Fragment {
             gameThread.scheduleAtFixedRate(new TimerTask() {
                 public void run() {
                     addPoints();
+                    boxChange = (float) ((7 + (Math.sqrt(score) * 1.5f)) / 1920) * height + boxChange2;
                     long end = System.currentTimeMillis();
                     if (end - startClid >= 0) {
                         getActivity().runOnUiThread(() -> counter.setText(String.valueOf(10 - (end - startClid) / 1000)));
@@ -189,10 +189,10 @@ public class GameFragment extends Fragment {
                             gotImmortalityBonus = false;
                             kunaImageView.setAlpha(1f);
                             bonusScore = 1;
+                            boxChange2 += 3;
                             getActivity().runOnUiThread(() -> counter.setVisibility(View.INVISIBLE));
                             getActivity().runOnUiThread(() -> bonusBubble.setVisibility(View.VISIBLE));
                             getActivity().runOnUiThread(() -> bonusPoints.setVisibility(View.INVISIBLE));
-                            boxChange = 10f;
                         }
                     }
 
@@ -217,25 +217,23 @@ public class GameFragment extends Fragment {
                         moveObstaclesToTop(randomForGuidelines, thirdGuideLine, thirdLeftIce, thirdRightIce);
                     }
                     //TODO adjust height * 2 to 5-6, its 2 for testing
-                    if (bonusBubble.getY() >= height * 2) {
+                    if (bonusBubble.getY() >= height * 4) {
                         Random r = new Random();
                         int i1 = r.nextInt(90);
                         bonusBubble.setX((i1 / 100f) * width);
-                        Log.d("123456", "run: " + i1);
-                        bonusBubble.setY(leftIce.getY() - leftIce.getHeight() - discanceBetweenIces * 3);
-                        if (i1 < 10) {
+                        bonusBubble.setY(leftIce.getY() - discanceBetweenIces * 3);
+                        if (i1 < 75) {
                             bonusBubble.setBackground(getResources().getDrawable(R.drawable.hourglass));
                             bonusBubble.setId(2222);
-                        } else if (i1 > 10 && i1 < 20) {
+                        } else if (i1 > 85 && i1 < 90) {
                             bonusBubble.setBackground(getResources().getDrawable(R.drawable.immortality_bubble));
                             bonusBubble.setId(1111);
-                        } else if (i1 > 20 && i1 < 30) {
+                        } else if (i1 > 91 && i1 < 95) {
                             bonusBubble.setId(3333);
                             bonusBubble.setBackground(getResources().getDrawable(R.drawable.x2));
                         } else {
                             bonusBubble.setId(4444);
-                            bonusBubble.setBackground(getResources().getDrawable(R.drawable.x2));
-                            bonusBubble.setRotation(180);
+                            bonusBubble.setBackground(getResources().getDrawable(R.drawable.minusfive));
                         }
                     }
 
@@ -290,7 +288,7 @@ public class GameFragment extends Fragment {
         collisionDetectionThread.cancel();
         collisionDetectionThread.purge();
         change = 0;
-        boxChange = 10f;
+//        boxChange = (float) ((7 + (Math.sqrt(score) * 1.5f))/1920) * height;
         gotImmortalityBonus = false;
         Bundle bundle = new Bundle();
         bundle.putInt("SCORE", score);
