@@ -83,11 +83,12 @@ public class GameLostFragment extends Fragment {
                 String fullName = firebaseAuth.getCurrentUser().getEmail();
                 username = fullName.split("@")[0];
             }
-
             Score currentScore = new Score(username, bundle.getInt("TIME"), bundle.getInt("SCORE"));
-
             mFirebaseDatabase = mFirebaseDatabaseInstance.getReference("scores");
             mFirebaseDatabase.push().setValue(currentScore);
+//            Score n = new Score(bundle.getInt("TIME"), bundle.getInt("SCORE"));
+//            mFirebaseDatabase = mFirebaseDatabaseInstance.getReference("scores/".concat(username));
+//            mFirebaseDatabase.push().setValue(n);
         }
 
         gameFragment = new GameFragment();

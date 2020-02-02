@@ -1,5 +1,6 @@
 package com.fixed4fun.jumpingkunav2;
 
+import android.view.View;
 import android.widget.ImageView;
 
 public class CollisionDetection {
@@ -7,7 +8,7 @@ public class CollisionDetection {
     public CollisionDetection() {
     }
 
-    public boolean collision(ImageView a, ImageView b) {
+    public boolean collision(ImageView a, View b) {
         float firstObjectLeftTopX, firstObjectLeftBottomX, firstObjectRightTopX, firstObjectRightBottomX;
         float firstObjectLeftTopY, firstObjectLeftBottomY, firstObjectRightTopY, firstObjectRightBottomY;
 
