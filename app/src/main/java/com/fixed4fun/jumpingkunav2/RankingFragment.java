@@ -131,9 +131,7 @@ public class RankingFragment extends Fragment {
 
                     }
                     sorting(globalScores);
-                    for (int j = 24; j < globalScores.size(); j++) {
-                        globalScores.remove(globalScores.get(j));
-                    }
+
                     if (getActivity() != null) {
                         adapter = new RankingAdapter(getContext(), globalScores);
                     }
@@ -170,12 +168,11 @@ public class RankingFragment extends Fragment {
                         progressBar.setVisibility(View.GONE);
                         loginText.setVisibility(View.GONE);
                         friendList.clear();
+                        String fullName = firebaseAuth.getCurrentUser().getEmail();
+                        String username = fullName.split("@")[0];
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            String fullName = firebaseAuth.getCurrentUser().getEmail();
-                            String username = fullName.split("@")[0];
-                            //TODO implement friend list check
-                            if (ds.getKey().equals(username)) {
-                                for (DataSnapshot score : ds.getChildren()) {
+                            for (DataSnapshot score : ds.getChildren()) {
+                                if (MainActivity.yourFriends.contains(ds.getKey()) || ds.getKey().equals(username)) {
                                     Score score2 = new Score();
                                     score2.setName(ds.getKey());
                                     score2.setT(score.getValue(Score.class).getT());
@@ -191,6 +188,7 @@ public class RankingFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         rV.setAdapter(adapter);
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -246,6 +244,7 @@ public class RankingFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         rV.setAdapter(adapter);
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 

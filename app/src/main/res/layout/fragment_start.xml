@@ -36,13 +36,13 @@
 
     <Button
         android:id="@+id/login_register"
+        style="@style/FontFamilyButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginBottom="32dp"
         android:text="Log in"
-        style="@style/FontFamilyButtons"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -76,4 +76,14 @@
         app:layout_constraintStart_toEndOf="@+id/kuna"
         app:layout_constraintTop_toTopOf="@+id/main_leftice"
         app:srcCompat="@drawable/left_ice" />
+
+    <Button
+        android:id="@+id/friends"
+        style="@style/FontFamilyButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="friends"
+        app:layout_constraintBottom_toTopOf="@+id/login_register"
+        app:layout_constraintStart_toStartOf="@+id/login_register" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.fixed4fun.jumpingkunav2.GameFragments.GameFragment;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Timer;
@@ -33,6 +32,7 @@ public class StartFragment extends Fragment {
     Button startGame;
     Button logInRegister;
     Button goToRanking;
+    Button gotoFriends;
     ImageView kuna;
     static float change = 0f;
     static float boxChange = 0f;
@@ -40,6 +40,7 @@ public class StartFragment extends Fragment {
     ImageView right;
     private FirebaseAuth firebaseAuth;
     private String username;
+    Timer jumpInBackground;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,14 +59,18 @@ public class StartFragment extends Fragment {
         right = view.findViewById(R.id.main_rightice);
         goToRanking = view.findViewById(R.id.go_to_ranking);
         logInRegister = view.findViewById(R.id.login_register);
+        gotoFriends = view.findViewById(R.id.friends);
+        gotoFriends.setVisibility(View.INVISIBLE);
         GameFragment gameFragment = new GameFragment();
         RegistrationFragment registrationFragment = new RegistrationFragment();
         RankingFragment rankingFragment = new RankingFragment();
+        CollisionDetection.FriendsFragment friendsFragment = new CollisionDetection.FriendsFragment();
 
 
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
             String fullName = firebaseAuth.getCurrentUser().getEmail();
+            gotoFriends.setVisibility(View.VISIBLE);
             username = fullName.split("@")[0];
         } else {
             username = "";
@@ -79,7 +84,7 @@ public class StartFragment extends Fragment {
             logInRegister.setText("log out " + username);
         }
 
-        Timer jumpInBackground = new Timer();
+        jumpInBackground = new Timer();
         startGame.setOnClickListener(v -> {
             getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, gameFragment).commit();
             jumpInBackground.purge();
@@ -97,11 +102,18 @@ public class StartFragment extends Fragment {
                 Toast.makeText(getContext(), "Signing out" + " " + username, Toast.LENGTH_SHORT).show();
                 logInRegister.setText("SIGN IN");
                 firebaseAuth.signOut();
+                gotoFriends.setVisibility(View.INVISIBLE);
             }
         });
 
-        goToRanking.setOnClickListener( v->{
+        goToRanking.setOnClickListener(v -> {
             getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, rankingFragment).commit();
+            jumpInBackground.purge();
+            jumpInBackground.cancel();
+        });
+
+        gotoFriends.setOnClickListener(v -> {
+            getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, friendsFragment).commit();
             jumpInBackground.purge();
             jumpInBackground.cancel();
         });
@@ -132,13 +144,4 @@ public class StartFragment extends Fragment {
         return view;
 
     }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-
-    }
-
 }
