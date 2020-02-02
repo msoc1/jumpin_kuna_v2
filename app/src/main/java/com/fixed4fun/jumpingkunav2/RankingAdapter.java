@@ -40,13 +40,14 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.RankingV
 
 
 
-        if (time / 1000 < 60) {
+//        if (time / 1000 < 60) {
             String toSet = time / 1000 + ":" + time % 1000 + "s";
             holder.timeRanking.setText(toSet);
-        } else {
-            String toSet = time / 60000 + ":" + (time % 60000) / 1000 + ":" + time % 100 + "s";
-            holder.timeRanking.setText(toSet);
-        }
+//        }
+//        } else {
+//            String toSet = time / 60000 + ":" + (time % 60000) / 1000 + ":" + time % 100 + "s";
+//            holder.timeRanking.setText(toSet);
+//        }
     }
 
     @Override

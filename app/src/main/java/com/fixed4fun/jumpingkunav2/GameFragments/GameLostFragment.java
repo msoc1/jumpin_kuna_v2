@@ -2,15 +2,22 @@ package com.fixed4fun.jumpingkunav2.GameFragments;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fixed4fun.jumpingkunav2.MainActivity;
 import com.fixed4fun.jumpingkunav2.R;
@@ -19,6 +26,10 @@ import com.fixed4fun.jumpingkunav2.StartFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 
 /**
@@ -33,6 +44,7 @@ public class GameLostFragment extends Fragment {
 
     private Button newGame;
     private Button goToHome;
+    Button share;
     private TextView yourScore;
     private TextView yourTime;
     private GameFragment gameFragment;
@@ -85,8 +97,20 @@ public class GameLostFragment extends Fragment {
             getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, gameFragment).commit();
         });
 
-        goToHome.setOnClickListener( va -> {
+        goToHome.setOnClickListener(va -> {
             getActivity().getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, startFragment).commit();
+        });
+
+        share = inflatedView.findViewById(R.id.share_score);
+        share.setOnClickListener(v -> {
+            int time = bundle.getInt("TIME");
+            String timeToSet = time / 1000 + ":" + time % 1000 + "s";
+            String message = "I scored " + bundle.getInt("SCORE") + " in " + timeToSet + " playing \n\tJumpin Kuna!" + "\n"
+                    + " play.google.com/store/apps/details?id=com.fixed4fun.jumpinkuna";
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("text/plain");
+            share.putExtra(Intent.EXTRA_TEXT, message);
+            startActivity(Intent.createChooser(share, "Share Jumpin Kuna!"));
         });
 
 
