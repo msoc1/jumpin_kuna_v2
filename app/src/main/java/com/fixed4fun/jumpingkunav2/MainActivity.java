@@ -3,17 +3,16 @@ package com.fixed4fun.jumpingkunav2;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +35,14 @@ public class MainActivity extends AppCompatActivity {
         if (arrayList != null) {
             yourFriends.addAll(arrayList);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        StartFragment startFragment = new StartFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.constraint_main, startFragment).commit();
+        StartFragment.jumpInBackground.purge();
+        StartFragment.jumpInBackground.cancel();
     }
 
     @Override

@@ -40,7 +40,7 @@ public class StartFragment extends Fragment {
     ImageView right;
     private FirebaseAuth firebaseAuth;
     private String username;
-    Timer jumpInBackground;
+    static Timer jumpInBackground;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -117,6 +117,7 @@ public class StartFragment extends Fragment {
             jumpInBackground.purge();
             jumpInBackground.cancel();
         });
+
 
 
         jumpInBackground.scheduleAtFixedRate(new TimerTask() {

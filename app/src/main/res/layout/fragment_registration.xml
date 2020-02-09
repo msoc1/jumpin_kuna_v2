@@ -45,6 +45,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:ems="10"
+        android:textSize="14sp"
         android:hint="Name"
         android:fontFamily="@font/press_start_2p"
 
@@ -59,7 +60,7 @@
         android:ems="10"
         android:hint="Password"
         android:fontFamily="@font/press_start_2p"
-
+        android:textSize="14sp"
         android:inputType="textPassword"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
         app:layout_constraintStart_toStartOf="@+id/username_edittext" />

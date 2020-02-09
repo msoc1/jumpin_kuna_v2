@@ -132,8 +132,14 @@ public class RankingFragment extends Fragment {
                     }
                     sorting(globalScores);
 
+                    ArrayList<Score> showThis= new ArrayList<>();
+
+                    for(int i =0; i<25 ; i++){
+                        showThis.add(globalScores.get(i));
+                    }
+
                     if (getActivity() != null) {
-                        adapter = new RankingAdapter(getContext(), globalScores);
+                        adapter = new RankingAdapter(getContext(), showThis);
                     }
                     adapter.notifyDataSetChanged();
                     rV.setVisibility(View.VISIBLE);

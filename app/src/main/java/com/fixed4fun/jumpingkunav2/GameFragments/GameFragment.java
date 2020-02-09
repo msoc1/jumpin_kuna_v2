@@ -1,6 +1,7 @@
 package com.fixed4fun.jumpingkunav2.GameFragments;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,9 +21,9 @@ import android.widget.TextView;
 import com.fixed4fun.jumpingkunav2.CollisionDetection;
 import com.fixed4fun.jumpingkunav2.R;
 
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 /**
@@ -49,7 +50,6 @@ public class GameFragment extends Fragment {
     static int height;
     static int width;
 
-    //TODO change those to an ImageView[] for simplification
     ImageView secondLeftIce;
     ImageView secondRightIce;
     ImageView thirdLeftIce;
@@ -68,7 +68,7 @@ public class GameFragment extends Fragment {
     TextView bonusPoints;
     TextView bonusSeconds;
 
-
+    int bonusSecondsCounter = 0;
     static float change = 0;
     static long startClid;
     //TODO change obstacle speed and distance based on user score
@@ -84,7 +84,9 @@ public class GameFragment extends Fragment {
     static boolean gotImmortalityBonus = false;
     Timer collisionDetectionThread = new Timer();
     Timer gameThread = new Timer();
-    int boxChange2;
+    float boxChange2;
+    float boxChange3 = 0.17f;
+    int previousID = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,7 +99,6 @@ public class GameFragment extends Fragment {
         height = displayMetrics.heightPixels;
         width = displayMetrics.widthPixels;
 
-
         CollisionDetection cd = new CollisionDetection();
         ConstraintSet constraintSet = new ConstraintSet();
         settingUpViews(view);
@@ -106,19 +107,21 @@ public class GameFragment extends Fragment {
         constraintSet.applyTo(constraintLayout);
 //        getActivity().setContentView(constraintLayout);
         settingUpObstacleDimens();
-        Random randomForGuidelines = new Random();
 
 
         clickViewLeft.setOnClickListener(v -> {
-            change = -16f;
+            change = -22f;
             leftOrRight = 0;
-            leftOrRight += -8f;
+            leftOrRight += -7f;
+            kunaImageView.setImageResource(R.drawable.left);
         });
 
         clickViewRight.setOnClickListener(v -> {
-            change = -16f;
+            change = -22f;
             leftOrRight = 0;
-            leftOrRight += 8f;
+            leftOrRight += 7f;
+            kunaImageView.setImageResource(R.drawable.right);
+
         });
 
 
@@ -127,14 +130,14 @@ public class GameFragment extends Fragment {
             collisionDetectionThread = new Timer();
             gameThread = new Timer();
             kunaImageView.setY(height / 3);
-            int delay = 16; // delay for 0.17 sec.
+            int delay = 0; // delay for 0.17 sec.
             int period = 16; // repeat every sec.
             change = 1f;
-            setUpBeggining(randomForGuidelines);
+            setUpBeggining();
             runStartTime = System.currentTimeMillis();
 
-
             collisionDetectionThread.scheduleAtFixedRate(new TimerTask() {
+                @SuppressLint("ResourceType")
                 @Override
                 public void run() {
                     //commented for testing purposes
@@ -162,25 +165,29 @@ public class GameFragment extends Fragment {
                             getActivity().runOnUiThread(() -> bonusPoints.setVisibility(View.VISIBLE));
                         } else if (bonusBubble.getId() == 4444) {
                             runStartTime = runStartTime + 5000;
+                            bonusSecondsCounter += 5;
+                            String show = "-" + bonusSecondsCounter + "s";
                             getActivity().runOnUiThread(() -> {
-                                bonusSeconds.append("\n-5s");
+                                bonusSeconds.setText(show);
                                 bonusSeconds.setVisibility(View.VISIBLE);
                                 counter.setVisibility(View.INVISIBLE);
                             });
                         }
+                        previousID = bonusBubble.getId();
                         getActivity().runOnUiThread(() -> bonusBubble.setVisibility(View.INVISIBLE));
                     }
                 }
-            }, delay, period);
+            }, delay, 32);
 
 
             gameThread.scheduleAtFixedRate(new TimerTask() {
+                @SuppressLint("ResourceType")
                 public void run() {
                     addPoints();
-                    boxChange = (float) ((7 + (Math.sqrt(score) * 1.5f)) / 1920) * height + boxChange2;
+                    boxChange = 8f + boxChange2 + boxChange3;
                     long end = System.currentTimeMillis();
                     if (end - startClid >= 0) {
-                        getActivity().runOnUiThread(() -> counter.setText(String.valueOf(10 - (end - startClid) / 1000)));
+                        getActivity().runOnUiThread(() -> counter.setText(String.valueOf(10 - (end - startClid) / 1000) + "s"));
                     }
 
                     if (gotImmortalityBonus) {
@@ -189,7 +196,8 @@ public class GameFragment extends Fragment {
                             gotImmortalityBonus = false;
                             kunaImageView.setAlpha(1f);
                             bonusScore = 1;
-                            boxChange2 += 3;
+                            if (previousID == 2222)
+                                boxChange2 += 5;
                             getActivity().runOnUiThread(() -> counter.setVisibility(View.INVISIBLE));
                             getActivity().runOnUiThread(() -> bonusBubble.setVisibility(View.VISIBLE));
                             getActivity().runOnUiThread(() -> bonusPoints.setVisibility(View.INVISIBLE));
@@ -198,7 +206,7 @@ public class GameFragment extends Fragment {
 
                     //move obstacles back to the top
                     if (leftIce.getY() >= height) {
-                        int i1 = randomForGuidelines.nextInt(80) + 10;
+                        int i1 = ThreadLocalRandom.current().nextInt(20, 81);
                         firstGuideline.setX((i1 / 100f) * width);
                         rightIce.setY(thirdRightIce.getY() - discanceBetweenIces - leftIce.getHeight());
                         leftIce.setY(rightIce.getY());
@@ -206,7 +214,7 @@ public class GameFragment extends Fragment {
                         rightIce.setX(firstGuideline.getX() + mlp.rightMargin);
                     }
                     if (secondLeftIce.getY() >= height) {
-                        int i1 = randomForGuidelines.nextInt(80) + 10;
+                        int i1 = ThreadLocalRandom.current().nextInt(20, 81);
                         secondGuideline.setX((i1 / 100f) * width);
                         secondRightIce.setY(rightIce.getY() - discanceBetweenIces - rightIce.getHeight());
                         secondLeftIce.setY(leftIce.getY() - discanceBetweenIces - leftIce.getHeight());
@@ -214,26 +222,24 @@ public class GameFragment extends Fragment {
                         secondRightIce.setX(secondGuideline.getX() + mlp.rightMargin);
                     }
                     if (thirdLeftIce.getY() >= height) {
-                        moveObstaclesToTop(randomForGuidelines, thirdGuideLine, thirdLeftIce, thirdRightIce);
+                        moveObstaclesToTop(thirdGuideLine, thirdLeftIce, thirdRightIce);
                     }
-                    //TODO adjust height * 2 to 5-6, its 2 for testing
-                    if (bonusBubble.getY() >= height * 4) {
-                        Random r = new Random();
-                        int i1 = r.nextInt(90);
+                    if (bonusBubble.getY() >= height * 8) {
+                        int i1 = ThreadLocalRandom.current().nextInt(0, 100);
                         bonusBubble.setX((i1 / 100f) * width);
                         bonusBubble.setY(leftIce.getY() - discanceBetweenIces * 3);
-                        if (i1 < 75) {
-                            bonusBubble.setBackground(getResources().getDrawable(R.drawable.hourglass));
+                        if (i1 <= 22) {
+                            getActivity().runOnUiThread(() -> bonusBubble.setBackground(getResources().getDrawable(R.drawable.hourglass)));
                             bonusBubble.setId(2222);
-                        } else if (i1 > 85 && i1 < 90) {
-                            bonusBubble.setBackground(getResources().getDrawable(R.drawable.immortality_bubble));
+                        } else if (i1 <= 44) {
+                            getActivity().runOnUiThread(() -> bonusBubble.setBackground(getResources().getDrawable(R.drawable.immortality_bubble)));
                             bonusBubble.setId(1111);
-                        } else if (i1 > 91 && i1 < 95) {
+                        } else if (i1 <= 68) {
                             bonusBubble.setId(3333);
-                            bonusBubble.setBackground(getResources().getDrawable(R.drawable.x2));
+                            getActivity().runOnUiThread(() -> bonusBubble.setBackground(getResources().getDrawable(R.drawable.x2)));
                         } else {
                             bonusBubble.setId(4444);
-                            bonusBubble.setBackground(getResources().getDrawable(R.drawable.minusfive));
+                            getActivity().runOnUiThread(() -> bonusBubble.setBackground(getResources().getDrawable(R.drawable.minusfive)));
                         }
                     }
 
@@ -252,7 +258,7 @@ public class GameFragment extends Fragment {
                         gameLost();
                     } else {
                         //game
-                        change += 1.5;
+                        change += 2f;
                         getActivity().runOnUiThread(() -> {
                             kunaImageView.setY(kunaImageView.getY() + change);
                             kunaImageView.setX(kunaImageView.getX() + leftOrRight);
@@ -266,7 +272,7 @@ public class GameFragment extends Fragment {
                         });
                     }
                 }
-            }, delay, period);
+            }, 0, period);
         });
 
 
@@ -298,7 +304,8 @@ public class GameFragment extends Fragment {
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.constraint_main, gameLostFragment).commit();
     }
 
-    public void setUpBeggining(Random r) {
+    @SuppressLint("ResourceType")
+    public void setUpBeggining() {
         leftIce.setVisibility(View.VISIBLE);
         rightIce.setVisibility(View.VISIBLE);
         bonusBubble.setVisibility(View.VISIBLE);
@@ -311,15 +318,30 @@ public class GameFragment extends Fragment {
         thirdRightIce.setY(secondLeftIce.getY() - discanceBetweenIces - leftIce.getHeight());
         kunaImageView.setX(width / 2);
         kunaImageView.setY(height * 0.45f);
-        int i1 = r.nextInt(80) + 10;
+        int i1 = ThreadLocalRandom.current().nextInt(20, 81);
         firstGuideline.setX((i1 / 100f) * width);
-        i1 = r.nextInt(80) + 10;
+        i1 = ThreadLocalRandom.current().nextInt(20, 81);
         secondGuideline.setX((i1 / 100f) * width);
-        i1 = r.nextInt(80) + 10;
+        i1 = ThreadLocalRandom.current().nextInt(20, 81);
         thirdGuideLine.setX((i1 / 100f) * width);
-        bonusBubble.setY(-570);
-        i1 = r.nextInt(90);
+        bonusBubble.setY(-1570);
+        i1 = ThreadLocalRandom.current().nextInt(20, 81);
         bonusBubble.setX((i1 / 100f) * width);
+        bonusBubble.setY(leftIce.getY() - discanceBetweenIces * 3);
+        i1 = ThreadLocalRandom.current().nextInt(101);
+        if (i1 <= 22) {
+            getActivity().runOnUiThread(() -> bonusBubble.setBackground(getResources().getDrawable(R.drawable.hourglass)));
+            bonusBubble.setId(2222);
+        } else if (i1 <= 44) {
+            getActivity().runOnUiThread(() -> bonusBubble.setBackground(getResources().getDrawable(R.drawable.immortality_bubble)));
+            bonusBubble.setId(1111);
+        } else if (i1 <= 68) {
+            bonusBubble.setId(3333);
+            getActivity().runOnUiThread(() -> bonusBubble.setBackground(getResources().getDrawable(R.drawable.x2)));
+        } else {
+            bonusBubble.setId(4444);
+            getActivity().runOnUiThread(() -> bonusBubble.setBackground(getResources().getDrawable(R.drawable.minusfive)));
+        }
         score = 0;
         activeObstacle = 0;
 
@@ -332,6 +354,7 @@ public class GameFragment extends Fragment {
         getActivity().runOnUiThread(() -> scoreTextView.setText(String.valueOf(score)));
     }
 
+    @SuppressLint("ResourceType")
     public void settingUpViews(View view) {
         kunaImageView = view.findViewById(R.id.kuna_image_view);
         startGameButton = view.findViewById(R.id.start_game_button);
@@ -357,9 +380,9 @@ public class GameFragment extends Fragment {
         thirdRightIce = new ImageView(getContext());
         bonusBubble = new ImageView(getContext());
         secondLeftIce.setImageResource(R.drawable.left_ice);
-        secondRightIce.setImageResource(R.drawable.right_ice);
+        secondRightIce.setImageResource(R.drawable.left_ice);
         thirdLeftIce.setImageResource(R.drawable.left_ice);
-        thirdRightIce.setImageResource(R.drawable.right_ice);
+        thirdRightIce.setImageResource(R.drawable.left_ice);
         bonusBubble.setBackground(getResources().getDrawable(R.drawable.immortality_bubble));
         secondLeftIce.setY(leftIce.getY() - discanceBetweenIces - secondLeftIce.getHeight());
         secondRightIce.setY(secondLeftIce.getY());
@@ -401,9 +424,8 @@ public class GameFragment extends Fragment {
         });
     }
 
-    public void moveObstaclesToTop(Random r, View guideline, View leftIce, View rightIce) {
-        //TODO simplify this method to work for N number of obstacles
-        int i1 = r.nextInt(80) + 10;
+    public void moveObstaclesToTop(View guideline, View leftIce, View rightIce) {
+        int i1 = ThreadLocalRandom.current().nextInt(20, 81);
         guideline.setX((i1 / 100f) * width);
         leftIce.setY(secondLeftIce.getY() - discanceBetweenIces - leftIce.getHeight());
         rightIce.setY(secondLeftIce.getY() - discanceBetweenIces - leftIce.getHeight());
@@ -416,16 +438,19 @@ public class GameFragment extends Fragment {
             if (kunaImageView.getY() <= leftIce.getY()) {
                 activeObstacle = 1;
                 score = score + bonusScore;
+                boxChange3 += 0.17f;
             }
         } else if (activeObstacle == 1) {
             if (kunaImageView.getY() <= secondLeftIce.getY()) {
                 activeObstacle = 2;
                 score = score + bonusScore;
+                boxChange3 += 0.17f;
             }
         } else {
             if (kunaImageView.getY() <= thirdLeftIce.getY()) {
                 activeObstacle = 0;
                 score = score + bonusScore;
+                boxChange3 += 0.17f;
             }
         }
         getActivity().runOnUiThread(() -> scoreTextView.setText(String.valueOf(score)));

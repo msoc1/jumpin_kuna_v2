@@ -38,17 +38,19 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         style="@style/FontFamilyButtons"
-        android:text="Share"
+        android:text="Share your score"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/new_game_from_lost"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:text="new game"
         style="@style/FontFamilyButtons"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:text="new game"
+        android:lineSpacingExtra="25dp"
+        android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/share_score"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

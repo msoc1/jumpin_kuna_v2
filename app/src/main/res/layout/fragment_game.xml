@@ -12,9 +12,11 @@
     <Button
         android:id="@+id/start_game_button"
         style="@style/FontFamilyButtons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="start"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:lineSpacingExtra="25dp"
+        android:text="press\nto start"
+        android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +88,7 @@
         android:layout_marginStart="60dp"
         android:layout_marginLeft="60dp"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:srcCompat="@drawable/right_ice"
+        app:srcCompat="@drawable/left_ice"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteY="358dp" />
 
@@ -116,8 +118,8 @@
         android:layout_height="wrap_content"
         android:text="10"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/bonus_points"
-        app:layout_constraintStart_toStartOf="@+id/bonus_points"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bonus_points" />
 
     <TextView
@@ -128,8 +130,8 @@
         android:text="x2"
         android:textSize="24sp"
 
-        app:layout_constraintEnd_toEndOf="@+id/score_text"
-        app:layout_constraintStart_toStartOf="@+id/score_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/score_text" />
 
     <TextView
